@@ -26,12 +26,8 @@ def rev_enumerate(string):
 def find_second(s1, s2):
     '''  returns the offset of the second occurrence of s1 in s2 '''
 
-    first_occurrence = s2.find(s1)
-    if first_occurrence > -1:
-        lookup_from = first_occurrence + len(s1) 
-        return s2.find(s1, lookup_from)
+    return s2.find(s1, s2.find(s1) + 1)
 
-    return -1
 
 def get_lines(file_name):
     ''' Opens a file for reading and returns one line from the file at a time.
@@ -61,7 +57,7 @@ def get_lines(file_name):
                 last_idx = comment_starts if comment_starts > -1 else len(statement)
                 
                 yield statement[:last_idx]
-                statement = '' 
+                statement = ''
 
 class AllTest(unittest.TestCase):
     ''' Test cases for all functions '''
@@ -87,20 +83,29 @@ class AllTest(unittest.TestCase):
         test_seq = ''
         self.assertEqual([(i, x ) for i, x in rev_enumerate(test_seq)], [(len(test_seq) -  i - 1, x ) for i, x in enumerate(test_seq[::-1])])
 
-def test_find_second(self):
-    ''' test find_second(s1, s2) '''
+    def test_find_second(self):
+        ''' test find_second(s1, s2) '''
 
-    self.assertEqual(find_second('iss','Mississippi'), 4)
-    self.assertEqual(find_second('abba', 'abbabba'), 3)
-    self.assertEqual(find_second('is', 'this is'), 5)
-    self.assertEqual(find_second(' ', 'is it a'), 5)
-    self.assertEqual(find_second('mad', 'madam'), -1)
-    self.assertEqual(find_second('ISS','Mississippi'), -1)
+        self.assertEqual(find_second('iss','Mississippi'), 4)
+        self.assertEqual(find_second('abba', 'abbabba'), 3)
+        self.assertEqual(find_second('is', 'this is'), 5)
+        self.assertEqual(find_second(' ', 'is it as'), 5)
+        self.assertEqual(find_second('mad', 'madam'), -1)
+        self.assertEqual(find_second('ISS','Mississippi'), -1)
+
+    def test_get_lines(self):
+        ''' test get_lines(file) '''
+        result = ''
+        
+        for line in get_lines('test.txt'):
+            result += line
+
+        expected_result = '<line1 ><line2><line3.1 line3.2 line3.3><line4.1 line 4.2><line5><line6>'
+
+        self.assertEqual(result, expected_result)
+
     
 if __name__ == "__main__":
     ''' This is executed when run from the command line '''
 
     unittest.main(exit=False, verbosity=2)
-
-    for line in get_lines('test.txt'):
-        print(line)
